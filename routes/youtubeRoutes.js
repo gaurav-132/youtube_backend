@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+import { getCarauselData, getVideos } from '../controllers/youtube.controller.js';
+
 const router = express.Router();
-const { getCarauselData, getVideos } = require('../controllers/YoutubeDataController');
 
 router.post("/get-carausel-data", getCarauselData);
 router.post("/get-videos", getVideos);
 
 
-module.exports =  router;
+export { router as youtubeRoutes };

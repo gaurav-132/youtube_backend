@@ -1,4 +1,4 @@
-const Contact = require('../models/contactModel');
+import { Contact } from '../models/contact.model.js';
 // const data = require('../utils/youtubeData/dummyVideosData.mjs');
 
 const getCarauselData = async (req, res) => {
@@ -17,4 +17,5 @@ const getVideos = async (req, res) => {
     }
 }
 
-module.exports = { getCarauselData, getVideos };
+
+export { getCarauselData, getVideos };

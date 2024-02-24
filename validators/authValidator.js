@@ -1,4 +1,4 @@
-const { z } = require('zod');
+import { z } from 'zod';
 
 
 const signUpSchema = z.object({
@@ -35,4 +35,4 @@ const loginSchema = z.object({
 
 
 
-module.exports = { signUpSchema, loginSchema };
+export { signUpSchema, loginSchema };
