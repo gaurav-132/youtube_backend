@@ -1,8 +1,6 @@
 import express from "express";
 import cors from 'cors';
 import cookieParser from "cookie-parser";
-import { authRoutes } from './routes/authRoutes.js';
-import { youtubeRoutes } from './routes/youtubeRoutes.js';
 
 
 const app = express();
@@ -21,6 +19,9 @@ app.use(cookieParser());
 
 //routes import
 import userRouter from './routes/user.routes.js';
+import { authRoutes } from './routes/auth.routes.js';
+import { youtubeRoutes } from './routes/youtube.routes.js';
+
 
 
 
