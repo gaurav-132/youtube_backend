@@ -1,4 +1,5 @@
 import { User } from '../models/user.model.js';
+import { Video } from '../models/video.model.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
@@ -341,7 +342,7 @@ const uploadVideo = asyncHandler(async(req, res) => {
 
     const thumbnailFile = await uploadOnCloudinary(thumbnailPath);
 
-    console.log(videoFile, thumbnailFile); return;
+    console.log(videoFile);
 
 
     if(!(videoFile.url && thumbnailFile.url)){
