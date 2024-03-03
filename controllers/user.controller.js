@@ -3,6 +3,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
+import { transcodeAndUpload } from '../utils/transcodeAndUpload.js';
 import jwt from "jsonwebtoken";
 import { response } from 'express';
 
@@ -233,7 +234,7 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
         throw new ApiError(400, "All fields are required");
     };
 
-    const user = User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: { email, password }
@@ -264,7 +265,7 @@ const updateAvatar = asyncHandler(async(req, res) => {
         throw new ApiError(400,"Error while uploading avatar");
     }
 
-    const user = User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: { avatar : avatar.url }
@@ -298,7 +299,7 @@ const updateCoverImage = asyncHandler(async(req, res) => {
         throw new ApiError(400,"Error while uploading avatar");
     }
 
-    const user = User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: { coverImage : coverImage.url }
@@ -319,6 +320,67 @@ const updateCoverImage = asyncHandler(async(req, res) => {
     )
 });
 
+const uploadVideo = asyncHandler(async(req, res) => {
+
+    const { title, description } = req.body;
+
+    const videoFilePath = req.files?.videoFile[0].path;
+    const thumbnailPath = req.files?.thumbnail[0].path;
+
+    // console.log(videoFilePath, thumbnailPath);
+
+
+
+    if(!(videoFilePath && thumbnailPath)){
+        throw new ApiError(400, "Video file or thumbnail not Found");
+    }
+
+
+
+    const videoFile = await transcodeAndUpload(videoFilePath);
+
+    const thumbnailFile = await uploadOnCloudinary(thumbnailPath);
+
+    console.log(videoFile, thumbnailFile); return;
+
+
+    if(!(videoFile.url && thumbnailFile.url)){
+        throw new ApiError(400,"Error while uploading video");
+    }
+
+    const saveVideo = await Video.create(
+        {
+            videoFile : videoFile.url,
+            thumbnail : thumbnailFile.url, 
+            title,
+            description, 
+            owner : req.user?._id
+        }
+    );
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            saveVideo,
+            "Video Uploaded Successfully!"
+        )
+    );
+});
+
+const getUserChannelProfile = asyncHandler(async(req, res) => {
+    const { username } = req.params;
+
+    if(!username?.trim()){
+        throw new ApiError(400, "Username is Missing");
+    }
+
+    const user = await User.aggregate([
+
+    ]);
+});
+
 export { 
     registerUser, 
     loginUser, 
@@ -328,5 +390,6 @@ export {
     getCurrentUser,
     updateAccountDetails,
     updateCoverImage,
-    updateAvatar
+    updateAvatar,
+    uploadVideo
 };

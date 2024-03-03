@@ -24,7 +24,7 @@ const videoSchema = new Schema(
         },
 
         duration: {
-            type: Number, //cloudnary
+            type: Number, 
             required: true,
         },
 
