@@ -23,6 +23,31 @@ const videoSchema = new Schema(
             required: true,
         },
 
+        playlist: {
+            type: Number,
+            required: false,
+        },
+
+        audience: {
+            type: Number,
+            required: false,
+        },
+
+        visiblity: {
+            type: Number,
+            required: false,
+        },
+
+        scheduleDate: {
+            type: Date,
+            required: false,
+        },
+
+        scheduleTime: {
+            type: String,
+            required: false,
+        },
+
         duration: {
             type: Number, 
             required: false,

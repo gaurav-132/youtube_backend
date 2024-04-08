@@ -70,8 +70,10 @@ const generateAccessAndRefereshToken = async (userId) => {
     try{    
         const user = await User.findById(userId);
 
-        const accessToken = user.generateAccessToken();
-        const refreshToken = user.generateRefreshToken();
+        const accessToken = await user.generateAccessToken();
+        const refreshToken = await user.generateRefreshToken();
+
+        // console.log(accessToken, refreshToken);
 
         user.refreshToken = refreshToken;
         await user.save({ validateBeforeSave: false });
@@ -84,9 +86,6 @@ const generateAccessAndRefereshToken = async (userId) => {
 
 const loginUser = asyncHandler( async(req,res) => {
     const { email, username, password } = req.body;
-
-    console.log(username, password);
-
 
     if(!(username || email)){
         throw new ApiError(400, "Username or password is required");
@@ -114,6 +113,7 @@ const loginUser = asyncHandler( async(req,res) => {
         secure: true,
     }
 
+    
     return res
     .status(200)
     .cookie("accessToken",accessToken, options)
@@ -122,7 +122,7 @@ const loginUser = asyncHandler( async(req,res) => {
         new ApiResponse(
             200,
             {
-                user: loggedInUser,accessToken
+                user: loggedInUser, accessToken, refreshToken
             },
             "User logged in successfully"
         )
@@ -328,21 +328,15 @@ const uploadVideo = asyncHandler(async(req, res) => {
     const videoFilePath = req.files?.videoFile[0].path;
     const thumbnailPath = req.files?.thumbnail[0].path;
 
-    // console.log(videoFilePath, thumbnailPath);
-
-
+    // console.log(req.user);
 
     if(!(videoFilePath && thumbnailPath)){
         throw new ApiError(400, "Video file or thumbnail not Found");
     }
 
-
-
     const videoFile = await transcodeAndUpload(videoFilePath);
 
     const thumbnailFile = await uploadOnCloudinary(thumbnailPath);
-
-    console.log(videoFile);
 
 
     if(!(videoFile.url && thumbnailFile.url)){
@@ -382,6 +376,39 @@ const getUserChannelProfile = asyncHandler(async(req, res) => {
     ]);
 });
 
+const getUserVideos = asyncHandler(async(req, res) => {
+    
+    const videos = await Video.find({ owner: req.user._id });
+
+    const formattedVideos = videos.map(video => {
+        const date = new Date(video.createdAt);
+        const formattedDate = date.toLocaleDateString('en-GB');
+        
+        const videoObject = video.toObject(); // Convert Mongoose document to plain object
+    
+        // Add the date field to the plain object
+        return {
+            ...videoObject,
+            date: formattedDate
+        };
+    });
+    
+    
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            formattedVideos,
+            "Videos Fetched Successfully"
+        )
+    );
+
+});
+
+
+
 export { 
     registerUser, 
     loginUser, 
@@ -392,5 +419,6 @@ export {
     updateAccountDetails,
     updateCoverImage,
     updateAvatar,
-    uploadVideo
+    uploadVideo,
+    getUserVideos,
 };
