@@ -54,9 +54,14 @@ const registerUser = asyncHandler( async(req,res) => {
         "-password -refreshToken"
     );
 
+    if(user){
+        
+    }
+
     if(!createdUser){
         throw new ApiError(500, "Internal Server Error");
     }
+
 
     return res.status(201).json(
         new ApiResponse(200, createdUser, "User registered successfully!")

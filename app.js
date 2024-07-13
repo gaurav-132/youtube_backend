@@ -22,7 +22,7 @@ app.use(cookieParser());
 //routes import
 import userRouter from './routes/user.routes.js';
 import { authRoutes } from './routes/auth.routes.js';
-import { youtubeRoutes } from './routes/youtube.routes.js';
+import { youtubeRouter } from './routes/youtube.routes.js';
 import videoRouter from './routes/video.routes.js'
 
 
@@ -32,9 +32,10 @@ import videoRouter from './routes/video.routes.js'
 //routes declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/videos", videoRouter);
+app.use("/api/v1/youtube", youtubeRouter);
 
 
 app.use('/api/auth', authRoutes);
-app.use('/api/youtube', youtubeRoutes);
+// app.use('/api/youtube', youtubeRoutes);
 
 export { app };

@@ -13,9 +13,9 @@ const uploadVideo = asyncHandler(async(req, res) => {
     const videoFilePath = req.files?.videoFile[0].path;
     const thumbnailPath = req.files?.thumbnailFile[0].path;
 
-    console.log
+    // console.log
 
-    // console.log(req.user);
+    console.log(req.files);
 
     if(!(videoFilePath && thumbnailPath)){
         throw new ApiError(400, "Video file or thumbnail not Found");
